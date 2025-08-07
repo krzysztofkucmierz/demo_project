@@ -3,7 +3,7 @@ services:
     image: postgres:17
     container_name: postgres_demo_project
     ports:
-      - "5431:5431"
+      - "5431:5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
