@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "c:\\Users\\krzys\\anaconda3\\envs\\",
+        "./src"
+    ]
+}

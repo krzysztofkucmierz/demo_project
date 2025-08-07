@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:17
+    container_name: postgres_demo_project
+    ports:
+      - "5431:5431"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: demo_project
+    volumes:
+      - postgres_data:/var/lib/postgresql/data_demo_project
+
+
+volumes:
+  postgres_data:
+
