@@ -29,6 +29,8 @@ dependencies = [
     "alembic>=1.13.0",
     "python-dotenv>=1.0.0",
     "postgres-mcp-server>=1.0.1",
+    "sqlmodel>=0.0.24",
+    "fastapi>=0.116.1",
 ]
 
 [project.optional-dependencies]
@@ -53,6 +55,11 @@ test = [
 Homepage = "https://github.com/krzysztofkucmierz/demo_project"
 Repository = "https://github.com/krzysztofkucmierz/demo_project"
 Issues = "https://github.com/krzysztofkucmierz/demo_project/issues"
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+]
 
 [tool.black]
 line-length = 88
