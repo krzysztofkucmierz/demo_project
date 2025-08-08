@@ -8,11 +8,6 @@
 - it provides a REST API for managing reviews
 - it uses SQLModel for database operations
 
-
-## Key Workflows
-
-- TODO
-
 ### Code Standards
 
 - use SQLModel for database operations
@@ -31,6 +26,12 @@
 - Repository pattern for database access
 - Consistent error handling with HTTP exceptions
 - API routes follow RESTful conventions
+
+## Code quality
+- use mypy for type checking
+- use black for code formatting
+- use pytest for testing
+
 
 ### Project Documentation
 - Requirements are documented in `docs/requirements.md`
