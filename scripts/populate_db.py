@@ -12,7 +12,9 @@ Usage:
 """
 
 import random
+import uuid
 
+from sqlalchemy import text
 from sqlmodel import Session
 
 from app.database import engine
@@ -295,8 +297,6 @@ def clear_existing_data(session: Session) -> None:
     print("🗑️  Clearing existing data...")
 
     # Delete in order to respect foreign key constraints using proper SQLAlchemy
-    from sqlalchemy import text
-
     session.execute(text("DELETE FROM reviews"))
     session.execute(text("DELETE FROM reviewed_objects"))
     session.execute(text("DELETE FROM reviewers"))
@@ -338,7 +338,7 @@ def create_restaurants(session: Session, count: int = 50) -> list[ReviewedObject
     object_repo = ReviewedObjectRepository(session)
     restaurants = []
 
-    for i in range(count):
+    for _i in range(count):
         name = random.choice(RESTAURANT_NAMES)
         cuisine = random.choice(CUISINES)
         neighborhood = random.choice(NEIGHBORHOODS)
@@ -358,7 +358,7 @@ def create_restaurants(session: Session, count: int = 50) -> list[ReviewedObject
 
         restaurant_data = ReviewedObjectCreate(
             object_type="restaurant",
-            object_id=f"rest_{i+1:03d}",
+            object_id=str(uuid.uuid4()),
             object_name=name,
             object_description=f"A {cuisine.lower()} restaurant in {neighborhood}",
             object_metadata=metadata,
@@ -510,8 +510,7 @@ def print_summary(
     for i in range(1, 6):
         count = sum(1 for r in reviews if r.star_rating == i)
         star_counts[i] = count
-        if count > 0:
-            print(f"  {i} stars: {count}")
+        print(f"  {i} stars: {count}")
 
     # Thumbs distribution
     thumbs_up = sum(1 for r in reviews if r.thumbs_rating == "up")
