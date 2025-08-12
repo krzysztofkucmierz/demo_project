@@ -1,49 +1,45 @@
 {
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "POSTGRES_USER",
-      "description": "database user name",
-      "password": true
-    },
-    {
-      "type": "promptString",
-      "id": "POSTGRES_PASSWORD",
-      "description": "database user password",      
-      "password": true
-    },
-    {
-      "type": "promptString",
-      "id": "POSTGRES_HOST",
-      "description": "database hostname",  
-      "password": true
-    },
-    {
-      "type": "promptString",
-      "description": "database port",        
-      "id": "POSTGRES_PORT",
-      "password": true
-    },
-    {
-      "type": "promptString",
-      "description": "database name",        
-      "id": "POSTGRES_DB",
-      "password": true
-    }    
-  ],
-
-  "servers": {
-    "postgres": {
-      "command": "${workspaceFolder}/.venv/bin/python",
-      "args": [
-        "-m",
-        "postgres_mcp_server",
-        "postgresql://${input:POSTGRES_USER}:${input:POSTGRES_PASSWORD}@${input:POSTGRES_HOST}:${input:POSTGRES_PORT}/${input:POSTGRES_DB}"
-      ],
-    },
-    "github": {
-        "type": "http",
-        "url": "https://api.githubcopilot.com/mcp/",
-    },
-  }
+	"inputs": [
+		{
+			"type": "promptString",
+			"id": "POSTGRES_USER",
+			"description": "database user name",
+			"password": true
+		},
+		{
+			"type": "promptString",
+			"id": "POSTGRES_PASSWORD",
+			"description": "database user password",
+			"password": true
+		},
+		{
+			"type": "promptString",
+			"id": "POSTGRES_HOST",
+			"description": "database hostname",
+			"password": true
+		},
+		{
+			"type": "promptString",
+			"description": "database port",
+			"id": "POSTGRES_PORT",
+			"password": true
+		},
+		{
+			"type": "promptString",
+			"description": "database name",
+			"id": "POSTGRES_DB",
+			"password": true
+		}
+	],
+	"servers": {
+		"postgres": {
+			"command": "${workspaceFolder}/.venv/bin/python",
+			"args": [
+				"-m",
+				"postgres_mcp_server",
+				"postgresql://${input:POSTGRES_USER}:${input:POSTGRES_PASSWORD}@${input:POSTGRES_HOST}:${input:POSTGRES_PORT}/${input:POSTGRES_DB}"
+			],
+			"type": "stdio"
+		}
+	}
 }
