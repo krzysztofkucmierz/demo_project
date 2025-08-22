@@ -30,34 +30,51 @@ A Python application with PostgreSQL database and SQLModel ORM for managing revi
 
 ## Prerequisites
 
+### Local Development
 - Python 3.13 or higher
 - [uv](https://docs.astral.sh/uv/) package manager
 - Docker and Docker Compose
 - Git
 
+### Dev Container (Recommended)
+- Visual Studio Code with Dev Containers extension
+- Docker Desktop
+- Git
+
+> **💡 Pro tip**: Use the Dev Container for the best development experience. Everything is pre-configured!
+
 ## Project Structure
 
 ```text
 demo_project/
-├── app/                    # Main application code
+├── .devcontainer/         # Development container configuration
+│   ├── devcontainer.json  # VS Code Dev Container config with Python 3.13
+│   └── Dockerfile         # Custom container with uv and PostgreSQL client
+├── .github/              # GitHub workflows and Codespaces config
+│   ├── copilot-instructions.md
+│   └── CODESPACES.md     # GitHub Codespaces setup guide
+├── app/                  # Main application code
 │   ├── __init__.py
-│   ├── main.py            # FastAPI application entry point
-│   ├── models.py          # SQLModel database models
-│   ├── database.py        # Database connection and session management
-│   └── repositories.py   # Repository pattern for data access
-├── migrations/            # Alembic database migrations
+│   ├── main.py          # FastAPI application entry point
+│   ├── models.py        # SQLModel database models
+│   ├── database.py      # Database connection and session management
+│   └── repositories.py # Repository pattern for data access
+├── migrations/          # Alembic database migrations
 │   ├── env.py
 │   └── versions/
 │       └── 87e9b654863c_create_initial_schema_for_review_.py
-├── tests/                 # Test files
+├── tests/               # Test files
 │   ├── __init__.py
 │   ├── test_main.py
 │   └── test_review_schema.py  # Comprehensive database schema tests
-├── docs/                  # Documentation
+├── docs/                # Documentation
 │   └── requirements.md
-├── docker-compose.yml     # PostgreSQL database setup
-├── pyproject.toml         # Project configuration and dependencies
-├── alembic.ini           # Alembic configuration
+├── scripts/             # Utility scripts
+│   └── populate_db.py
+├── docker-compose.yml   # PostgreSQL database setup
+├── pyproject.toml       # Project configuration and dependencies
+├── alembic.ini         # Alembic configuration
+├── setup-codespaces.sh # Automated setup script for Codespaces
 ├── README.md
 └── .gitignore
 ```
@@ -127,17 +144,40 @@ The migration creates the complete review management schema including:
 - `reviewed_objects` table with JSONB metadata support
 - `reviews` table with multiple rating types and constraints
 
-## GitHub Codespaces Support
+## Dev Container & GitHub Codespaces Support
 
-This project is fully configured to work with GitHub Codespaces out of the box. When you open the project in Codespaces, it will automatically:
+This project is fully configured to work with VS Code Dev Containers and GitHub Codespaces out of the box.
 
-- Install `uv` package manager
-- Set up Python 3.13 environment
-- Install all project dependencies
-- Configure development tools (Black, MyPy, Flake8, etc.)
-- Set up the FastAPI server port forwarding
+### DevContainer Features
 
-### Quick Start with Codespaces
+The `.devcontainer/` configuration includes:
+
+- **Base Image**: Microsoft's official Python 3.13 Dev Container image
+- **Pre-installed Tools**: 
+  - `uv` package manager (installed globally)
+  - PostgreSQL client and libpq-dev
+  - Git and GitHub CLI
+- **VS Code Extensions**: 
+  - Python language support
+  - Code formatters (Black, isort)
+  - Linters (Flake8, MyPy, Ruff)
+  - GitHub Copilot
+- **Automatic Setup**: 
+  - Runs `setup-codespaces.sh` after container creation
+  - Installs all project dependencies
+  - Configures development environment
+
+### GitHub Codespaces Quick Start
+
+When you open the project in Codespaces, it will automatically:
+
+1. Build the development container with Python 3.13
+2. Install `uv` package manager and system dependencies
+3. Run the setup script to install project dependencies
+4. Configure VS Code with recommended extensions and settings
+5. Set up port forwarding for FastAPI (port 8000)
+
+**Steps to get started:**
 
 1. Click the "Code" button on GitHub and select "Open with Codespaces"
 2. Wait for the environment to build (first time takes ~2-3 minutes)
@@ -145,7 +185,7 @@ This project is fully configured to work with GitHub Codespaces out of the box. 
 4. Run migrations: `uv run alembic upgrade head`
 5. Start the application: `uv run python -m app.main`
 
-**💡 Pro tip**: Enable [Codespaces prebuilds](.github/CODESPACES.md) in repository settings to reduce startup time to ~30 seconds!
+**💡 Pro tip**: See [`.github/CODESPACES.md`](.github/CODESPACES.md) for advanced configuration and prebuild setup!
 
 ### Manual uv Installation in Codespaces
 

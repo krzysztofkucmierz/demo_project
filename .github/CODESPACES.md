@@ -6,41 +6,128 @@ This document explains how to configure GitHub Codespaces for optimal performanc
 
 The project includes a `.devcontainer/` configuration that automatically:
 
-- Installs Python 3.13
-- Installs `uv` package manager  
-- Sets up development tools (Black, MyPy, Flake8, etc.)
+- Uses Microsoft's Python 3.13 Dev Container image
+- Installs `uv` package manager globally via custom Dockerfile
+- Sets up development tools (Black, MyPy, Flake8, Ruff, etc.)
 - Configures VS Code extensions and settings
-- Installs project dependencies after workspace is mounted
+- Installs project dependencies after workspace is created
+- Sets up port forwarding for FastAPI on port 8000
 
-## DevContainer Configuration Options
+## DevContainer Configuration
 
-### Option 1: Custom Dockerfile (Recommended)
+### Current Configuration
 
-Uses `.devcontainer/devcontainer.json` with a custom Dockerfile that pre-installs `uv` and system dependencies.
+The project uses a **custom Dockerfile approach** with the following setup:
 
-### Option 2: Simple Configuration (Fallback)
+```json
+{
+  "name": "Demo Project Development Environment",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.13-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "forwardPorts": [8000],
+  "postCreateCommand": "bash setup-codespaces.sh",
+  "workspaceFolder": "/workspaces/demo_project"
+}
+```
 
-If the custom Dockerfile fails, rename `.devcontainer/devcontainer-simple.json` to `devcontainer.json`. This uses the base Python image and installs everything via the setup script.
+### Custom Dockerfile Benefits
 
-## Troubleshooting Container Build Issues
+The `.devcontainer/Dockerfile` pre-installs:
 
-If you see errors like `"pyproject.toml": not found` during container build:
+- PostgreSQL client and libpq-dev for database connectivity
+- `uv` package manager installed globally and available to all users
+- System dependencies for Python development
 
-1. **Use the simple configuration**:
+### VS Code Extensions Included
 
-   ```bash
-   cd .devcontainer
-   mv devcontainer.json devcontainer-dockerfile.json
-   mv devcontainer-simple.json devcontainer.json
-   ```
+- **ms-python.python**: Python language support
+- **ms-python.black-formatter**: Code formatting with Black
+- **ms-python.isort**: Import sorting
+- **ms-python.mypy-type-checker**: Static type checking
+- **ms-python.flake8**: Code linting
+- **charliermarsh.ruff**: Fast Python linter
+- **GitHub.copilot**: AI code assistance
 
-2. **Or run setup manually**:
+## Quick Start Guide
 
-   ```bash
-   ./setup-codespaces.sh
-   ```
+### 1. Open in Codespaces
 
-## Setting Up Prebuilds (Optional)
+1. Go to the repository on GitHub
+2. Click the **Code** button
+3. Select **Open with Codespaces**
+4. Choose **New codespace** or select an existing one
+
+### 2. Wait for Setup
+
+The container will automatically:
+- Build the Python 3.13 environment
+- Install system dependencies
+- Run `setup-codespaces.sh` to install project dependencies
+- Configure VS Code settings
+
+### 3. Start Development
+
+Once setup is complete:
+
+```bash
+# Start the database
+docker-compose up -d
+
+# Run database migrations
+uv run alembic upgrade head
+
+# Start the FastAPI application
+uv run python -m app.main
+
+# Run tests
+uv run pytest
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Container build fails**: 
+   - Check the build logs in the VS Code terminal
+   - Try rebuilding the container: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
+
+2. **uv not found after setup**:
+   - The setup script should handle this automatically
+   - If needed, run: `bash setup-codespaces.sh` manually
+
+3. **Extensions not loading**:
+   - Reload the window: `Ctrl+Shift+P` → "Developer: Reload Window"
+   - Check if extensions are installed in the Extensions panel
+
+4. **Database connection issues**:
+   - Ensure Docker is running: `docker-compose up -d`
+   - Check if PostgreSQL container is running: `docker ps`
+
+### Manual Setup (if needed)
+
+If the automatic setup fails, you can run the setup manually:
+
+```bash
+# Navigate to project directory
+cd /workspaces/demo_project
+
+# Run the setup script
+bash setup-codespaces.sh
+
+# Install dependencies
+uv sync --extra dev --extra test
+
+# Start the database
+docker-compose up -d
+
+# Run migrations
+uv run alembic upgrade head
+```
+
+## Setting Up Prebuilds (Recommended)
 
 To speed up Codespace creation, you can enable prebuilds in your repository settings:
 
@@ -49,73 +136,58 @@ To speed up Codespace creation, you can enable prebuilds in your repository sett
 1. Go to your repository on GitHub
 2. Click **Settings** → **Codespaces**
 3. Click **Set up prebuild**
-4. Select the branch (usually `main`)
-5. Select the devcontainer configuration (`.devcontainer/devcontainer.json`)
-6. Choose when to trigger prebuilds:
-   - ✅ Configuration changes
-   - ✅ On push
-   - ✅ On schedule (optional)
+4. Configure the prebuild:
+   - **Branch**: `main`
+   - **Machine type**: `2-core` (sufficient for this project)
+   - **Triggers**: Select "On push" and "On configuration change"
 
 ### 2. Prebuild Configuration
 
-The prebuild will automatically:
+Create `.github/dependabot.yml` to keep prebuilds updated:
 
-- Build the Docker container
-- Install `uv` and Python dependencies
-- Set up the development environment
-
-This reduces Codespace startup time from ~3 minutes to ~30 seconds.
-
-## Manual uv Installation
-
-If you need to install `uv` manually in any environment:
-
-```bash
-# Run the setup script
-./setup-codespaces.sh
-
-# Or install manually
-curl -LsSf https://astral.sh/uv/install.sh | sh
-export PATH="$HOME/.cargo/bin:$PATH"
-echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: "weekly"
 ```
 
-## Troubleshooting Codespaces
+### 3. Expected Performance
 
-### Common Issues
+- **Without prebuilds**: ~2-3 minutes for first setup
+- **With prebuilds**: ~30-60 seconds to start coding
 
-1. **uv not found**: Run `./setup-codespaces.sh`
-2. **Port 8000 not forwarded**: Check VS Code ports panel
-3. **Docker not available**: Use GitHub-hosted PostgreSQL or local SQLite for testing
+## Advanced Configuration
 
-### Checking Setup
+### Custom Environment Variables
 
-```bash
-# Verify uv installation
-uv --version
+Add environment variables to your Codespace:
 
-# Check Python environment
-uv run python --version
+1. Go to **Settings** → **Codespaces**
+2. Add secrets under **Repository secrets**:
+   - `DATABASE_URL`: Custom database connection string
+   - `DEBUG`: Set to `true` for development
 
-# Test project setup
-uv run pytest tests/test_main.py -v
-```
+### Resource Allocation
 
-## Performance Tips
+For heavy development work, consider upgrading machine type:
+- **2-core**: Standard development (recommended)
+- **4-core**: Heavy testing or multiple services
+- **8-core**: Performance testing or large datasets
 
-1. **Use prebuilds** for faster startup
-2. **Pin to specific regions** closer to your location
-3. **Use 4-core machines** for better performance with larger projects
-4. **Enable auto-suspend** to save resources when inactive
+## Tips for Optimal Performance
 
-## Codespaces vs Local Development
+1. **Use prebuilds** to reduce startup time
+2. **Pin specific image versions** in devcontainer.json for consistency
+3. **Enable auto-suspend** to save compute credits when idle
+4. **Use VS Code settings sync** to maintain your preferences across Codespaces
+5. **Install only necessary extensions** to keep container lightweight
 
-| Feature | Local VS Code | GitHub Codespaces |
-|---------|---------------|-------------------|
-| `uv` availability | ✅ Manual install | ✅ Auto-configured |
-| Database | ✅ Docker | ✅ Docker available |
-| Performance | ✅ Native speed | ⚠️ Network dependent |
-| Setup time | ⚠️ Manual setup | ✅ Instant (with prebuilds) |
-| Cost | ✅ Free | 💰 Usage-based |
+## Support
 
-Both environments are fully supported and work identically once set up.
+For issues specific to GitHub Codespaces:
+- Check [GitHub Codespaces documentation](https://docs.github.com/en/codespaces)
+- Report issues in the repository's Issues tab
+- For general Codespaces support, contact GitHub Support
