@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # Get connection and execute outside of transaction for CONCURRENTLY
+    # Get connection; indexes will be created within the current transaction (no CONCURRENTLY)
     connection = op.get_bind()
 
     # Create indexes without CONCURRENTLY since we're in a transaction
