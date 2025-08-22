@@ -21,7 +21,6 @@ def upgrade() -> None:
     connection = op.get_bind()
 
     # Create indexes without CONCURRENTLY since we're in a transaction
-    # In production, these could be run manually with CONCURRENTLY
     connection.execute(
         text(
             "CREATE INDEX IF NOT EXISTS idx_reviews_reviewed_object_id "
