@@ -127,6 +127,43 @@ The migration creates the complete review management schema including:
 - `reviewed_objects` table with JSONB metadata support
 - `reviews` table with multiple rating types and constraints
 
+## GitHub Codespaces Support
+
+This project is fully configured to work with GitHub Codespaces out of the box. When you open the project in Codespaces, it will automatically:
+
+- Install `uv` package manager
+- Set up Python 3.13 environment
+- Install all project dependencies
+- Configure development tools (Black, MyPy, Flake8, etc.)
+- Set up the FastAPI server port forwarding
+
+### Quick Start with Codespaces
+
+1. Click the "Code" button on GitHub and select "Open with Codespaces"
+2. Wait for the environment to build (first time takes ~2-3 minutes)
+3. Start the database: `docker-compose up -d`
+4. Run migrations: `uv run alembic upgrade head`
+5. Start the application: `uv run python -m app.main`
+
+### Manual uv Installation in Codespaces
+
+If for some reason `uv` is not available, you can install it manually:
+
+```bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Add to PATH
+export PATH="$HOME/.cargo/bin:$PATH"
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+
+# Verify installation
+uv --version
+
+# Install dependencies
+uv sync --dev
+```
+
 ## Running the Application
 
 ### Run the Main Application
