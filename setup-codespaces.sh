@@ -6,6 +6,9 @@ set -e
 echo "🚀 Demo Project - Quick Setup for Codespaces"
 echo "============================================="
 
+# Make sure we're in the right directory
+cd /workspaces/demo_project 2>/dev/null || cd $(dirname "$0")
+
 # Check if uv is already installed
 if command -v uv &> /dev/null; then
     echo "✅ uv is already installed: $(uv --version)"
@@ -20,6 +23,12 @@ else
     echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
     
     echo "✅ uv installed: $(uv --version)"
+fi
+
+# Install system dependencies if needed (PostgreSQL client)
+if ! command -v psql &> /dev/null; then
+    echo "📦 Installing PostgreSQL client..."
+    sudo apt-get update && sudo apt-get install -y postgresql-client libpq-dev
 fi
 
 # Install Python dependencies

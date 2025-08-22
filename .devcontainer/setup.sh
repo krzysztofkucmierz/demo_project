@@ -15,6 +15,9 @@ fi
 
 echo "✅ uv version: $(uv --version)"
 
+# Change to workspace directory
+cd /workspaces/demo_project
+
 # Sync dependencies if not already done
 if [ -f "pyproject.toml" ] && [ -f "uv.lock" ]; then
     echo "📦 Syncing Python dependencies..."

@@ -7,10 +7,38 @@ This document explains how to configure GitHub Codespaces for optimal performanc
 The project includes a `.devcontainer/` configuration that automatically:
 
 - Installs Python 3.13
-- Installs `uv` package manager
+- Installs `uv` package manager  
 - Sets up development tools (Black, MyPy, Flake8, etc.)
 - Configures VS Code extensions and settings
-- Installs project dependencies
+- Installs project dependencies after workspace is mounted
+
+## DevContainer Configuration Options
+
+### Option 1: Custom Dockerfile (Recommended)
+
+Uses `.devcontainer/devcontainer.json` with a custom Dockerfile that pre-installs `uv` and system dependencies.
+
+### Option 2: Simple Configuration (Fallback)
+
+If the custom Dockerfile fails, rename `.devcontainer/devcontainer-simple.json` to `devcontainer.json`. This uses the base Python image and installs everything via the setup script.
+
+## Troubleshooting Container Build Issues
+
+If you see errors like `"pyproject.toml": not found` during container build:
+
+1. **Use the simple configuration**:
+
+   ```bash
+   cd .devcontainer
+   mv devcontainer.json devcontainer-dockerfile.json
+   mv devcontainer-simple.json devcontainer.json
+   ```
+
+2. **Or run setup manually**:
+
+   ```bash
+   ./setup-codespaces.sh
+   ```
 
 ## Setting Up Prebuilds (Optional)
 

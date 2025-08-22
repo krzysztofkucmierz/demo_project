@@ -14,15 +14,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /workspaces/demo_project
-
-# Copy project files
-COPY pyproject.toml uv.lock ./
-
-# Install Python dependencies using uv
-RUN /root/.cargo/bin/uv sync --dev
-
 # Make sure uv is available for the vscode user
 RUN cp /root/.cargo/bin/uv /usr/local/bin/uv
 RUN chmod +x /usr/local/bin/uv
