@@ -153,10 +153,12 @@ This project is fully configured to work with VS Code Dev Containers and GitHub 
 The `.devcontainer/` configuration includes:
 
 - **Base Image**: Microsoft's official Python 3.13 Dev Container image
+- **Docker-in-Docker**: Full Docker daemon with compose support for running PostgreSQL
 - **Pre-installed Tools**: 
   - `uv` package manager (installed globally)
   - PostgreSQL client and libpq-dev
   - Git and GitHub CLI
+  - Docker and Docker Compose v2
 - **VS Code Extensions**: 
   - Python language support
   - Code formatters (Black, isort)
@@ -166,24 +168,26 @@ The `.devcontainer/` configuration includes:
   - Runs `setup-codespaces.sh` after container creation
   - Installs all project dependencies
   - Configures development environment
+- **Port Forwarding**: FastAPI (8000) and PostgreSQL (5432)
 
 ### GitHub Codespaces Quick Start
 
 When you open the project in Codespaces, it will automatically:
 
-1. Build the development container with Python 3.13
-2. Install `uv` package manager and system dependencies
+1. Build the development container with Python 3.13 and Docker support
+2. Install `uv` package manager and system dependencies including Docker daemon
 3. Run the setup script to install project dependencies
 4. Configure VS Code with recommended extensions and settings
-5. Set up port forwarding for FastAPI (port 8000)
+5. Set up port forwarding for FastAPI (port 8000) and PostgreSQL (port 5432)
 
 **Steps to get started:**
 
 1. Click the "Code" button on GitHub and select "Open with Codespaces"
-2. Wait for the environment to build (first time takes ~2-3 minutes)
-3. Start the database: `docker-compose up -d`
-4. Run migrations: `uv run alembic upgrade head`
-5. Start the application: `uv run python -m app.main`
+2. Wait for the environment to build (first time takes ~3-4 minutes with Docker support)
+3. Verify Docker is working: `docker --version && docker-compose --version`
+4. Start the database: `docker-compose up -d`
+5. Run migrations: `uv run alembic upgrade head`
+6. Start the application: `uv run python -m app.main`
 
 **💡 Pro tip**: See [`.github/CODESPACES.md`](.github/CODESPACES.md) for advanced configuration and prebuild setup!
 

@@ -34,6 +34,7 @@
 
 
 ### Project Documentation
+- General project information: setup and development instructions are in `README.md`
 - Requirements are documented in `docs/requirements.md`
 - Architecture decisions are documented in `docs/architecture.md`
 - API documentation is generated using FastAPI's built-in OpenAPI support
