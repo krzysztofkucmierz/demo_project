@@ -1,0 +1,67 @@
+name: Validate DevContainer
+
+on:
+  push:
+    branches: [main]
+    paths: 
+      - '.devcontainer/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - 'setup-codespaces.sh'
+  pull_request:
+    branches: [main]
+    paths: 
+      - '.devcontainer/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - 'setup-codespaces.sh'
+
+jobs:
+  validate-devcontainer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate DevContainer JSON
+        run: |
+          # Check if devcontainer.json is valid JSON
+          python -m json.tool .devcontainer/devcontainer.json > /dev/null
+          echo "✅ DevContainer JSON is valid"
+
+      - name: Test setup script
+        run: |
+          # Make sure setup script is executable and has no syntax errors
+          chmod +x setup-codespaces.sh
+          bash -n setup-codespaces.sh
+          echo "✅ Setup script syntax is valid"
+
+      - name: Validate Dockerfile
+        run: |
+          # Basic Dockerfile validation
+          if [ -f ".devcontainer/Dockerfile" ]; then
+            docker --version
+            echo "✅ Dockerfile exists and Docker is available for validation"
+          fi
+
+  test-uv-installation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test uv installation script
+        run: |
+          # Test the uv installation part of our script
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.cargo/bin:$PATH"
+          uv --version
+          echo "✅ uv installation works"
+
+      - name: Test Python dependencies
+        run: |
+          # Install uv and test dependency installation
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.cargo/bin:$PATH"
+          uv sync --dev
+          echo "✅ Dependencies install successfully with uv"

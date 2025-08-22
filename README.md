@@ -145,6 +145,8 @@ This project is fully configured to work with GitHub Codespaces out of the box. 
 4. Run migrations: `uv run alembic upgrade head`
 5. Start the application: `uv run python -m app.main`
 
+**💡 Pro tip**: Enable [Codespaces prebuilds](.github/CODESPACES.md) in repository settings to reduce startup time to ~30 seconds!
+
 ### Manual uv Installation in Codespaces
 
 If for some reason `uv` is not available, you can install it manually:
