@@ -1,24 +1,28 @@
 FROM mcr.microsoft.com/devcontainers/python:1-3.13-bullseye
 
-# Install uv - the fast Python package installer
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Add uv to PATH for all users
-RUN echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /etc/bash.bashrc
-RUN echo 'export PATH="/root/.cargo/bin:$PATH"' >> /etc/bash.bashrc
-
 # Install system dependencies for PostgreSQL
 RUN apt-get update && apt-get install -y \
     postgresql-client \
     libpq-dev \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Make sure uv is available for the vscode user
-RUN cp /root/.cargo/bin/uv /usr/local/bin/uv
-RUN chmod +x /usr/local/bin/uv
+# Install uv - the fast Python package installer
+# Use a more robust installation method
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    export PATH="$HOME/.cargo/bin:$PATH" && \
+    uv --version && \
+    cp ~/.cargo/bin/uv /usr/local/bin/uv && \
+    chmod +x /usr/local/bin/uv
+
+# Ensure uv is in PATH for all users
+RUN echo 'export PATH="/usr/local/bin:$HOME/.cargo/bin:$PATH"' >> /etc/bash.bashrc
 
 # Create vscode user's .local/bin directory and add to PATH
-RUN mkdir -p /home/vscode/.local/bin
-RUN chown -R vscode:vscode /home/vscode/.local
-RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> /home/vscode/.bashrc
+RUN mkdir -p /home/vscode/.local/bin && \
+    chown -R vscode:vscode /home/vscode/.local && \
+    echo 'export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"' >> /home/vscode/.bashrc
+
+# Verify uv installation
+RUN uv --version
