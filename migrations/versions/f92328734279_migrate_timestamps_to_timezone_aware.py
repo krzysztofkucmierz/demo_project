@@ -24,24 +24,66 @@ def upgrade() -> None:
     # This assumes existing data is in UTC (server default is NOW() which returns UTC in PostgreSQL)
     
     # Update reviewers table timestamp columns
-    op.execute("ALTER TABLE reviewers ALTER COLUMN created_at TYPE timestamp with time zone USING created_at AT TIME ZONE 'UTC'")
-    op.execute("ALTER TABLE reviewers ALTER COLUMN updated_at TYPE timestamp with time zone USING updated_at AT TIME ZONE 'UTC'")
+    op.alter_column(
+        "reviewers", "created_at",
+        type_=sa.TIMESTAMP(timezone=True),
+        postgresql_using="created_at AT TIME ZONE 'UTC'"
+    )
+    op.alter_column(
+        "reviewers", "updated_at",
+        type_=sa.TIMESTAMP(timezone=True),
+        postgresql_using="updated_at AT TIME ZONE 'UTC'"
+    )
     
     # Update reviewed_objects table timestamp columns
-    op.execute("ALTER TABLE reviewed_objects ALTER COLUMN created_at TYPE timestamp with time zone USING created_at AT TIME ZONE 'UTC'")
-    op.execute("ALTER TABLE reviewed_objects ALTER COLUMN updated_at TYPE timestamp with time zone USING updated_at AT TIME ZONE 'UTC'")
+    op.alter_column(
+        "reviewed_objects", "created_at",
+        type_=sa.TIMESTAMP(timezone=True),
+        postgresql_using="created_at AT TIME ZONE 'UTC'"
+    )
+    op.alter_column(
+        "reviewed_objects", "updated_at",
+        type_=sa.TIMESTAMP(timezone=True),
+        postgresql_using="updated_at AT TIME ZONE 'UTC'"
+    )
     
     # Update reviews table timestamp columns
-    op.execute("ALTER TABLE reviews ALTER COLUMN created_at TYPE timestamp with time zone USING created_at AT TIME ZONE 'UTC'")
-    op.execute("ALTER TABLE reviews ALTER COLUMN updated_at TYPE timestamp with time zone USING updated_at AT TIME ZONE 'UTC'")
+    op.alter_column(
+        "reviews", "created_at",
+        type_=sa.TIMESTAMP(timezone=True),
+        postgresql_using="created_at AT TIME ZONE 'UTC'"
+    )
+    op.alter_column(
+        "reviews", "updated_at",
+        type_=sa.TIMESTAMP(timezone=True),
+        postgresql_using="updated_at AT TIME ZONE 'UTC'"
+    )
     
     # Update default values to use timezone-aware functions
-    op.execute("ALTER TABLE reviewers ALTER COLUMN created_at SET DEFAULT CURRENT_TIMESTAMP")
-    op.execute("ALTER TABLE reviewers ALTER COLUMN updated_at SET DEFAULT CURRENT_TIMESTAMP")
-    op.execute("ALTER TABLE reviewed_objects ALTER COLUMN created_at SET DEFAULT CURRENT_TIMESTAMP")
-    op.execute("ALTER TABLE reviewed_objects ALTER COLUMN updated_at SET DEFAULT CURRENT_TIMESTAMP")
-    op.execute("ALTER TABLE reviews ALTER COLUMN created_at SET DEFAULT CURRENT_TIMESTAMP")
-    op.execute("ALTER TABLE reviews ALTER COLUMN updated_at SET DEFAULT CURRENT_TIMESTAMP")
+    op.alter_column(
+        "reviewers", "created_at",
+        server_default=sa.text("CURRENT_TIMESTAMP")
+    )
+    op.alter_column(
+        "reviewers", "updated_at",
+        server_default=sa.text("CURRENT_TIMESTAMP")
+    )
+    op.alter_column(
+        "reviewed_objects", "created_at",
+        server_default=sa.text("CURRENT_TIMESTAMP")
+    )
+    op.alter_column(
+        "reviewed_objects", "updated_at",
+        server_default=sa.text("CURRENT_TIMESTAMP")
+    )
+    op.alter_column(
+        "reviews", "created_at",
+        server_default=sa.text("CURRENT_TIMESTAMP")
+    )
+    op.alter_column(
+        "reviews", "updated_at",
+        server_default=sa.text("CURRENT_TIMESTAMP")
+    )
 
 
 def downgrade() -> None:
