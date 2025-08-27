@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import CheckConstraint, UniqueConstraint, text
+from sqlalchemy import CheckConstraint, DateTime, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Column, Field, Relationship, SQLModel
 
@@ -36,11 +36,11 @@ class Reviewer(ReviewerBase, table=True):
     )
     created_at: datetime = Field(
         default_factory=utc_now,
-        sa_column_kwargs={"server_default": text("NOW()")},
+        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
     )
     updated_at: datetime = Field(
         default_factory=utc_now,
-        sa_column_kwargs={"server_default": text("NOW()")},
+        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
     )
 
     # Relationships
@@ -91,11 +91,11 @@ class ReviewedObject(ReviewedObjectBase, table=True):
     )
     created_at: datetime = Field(
         default_factory=utc_now,
-        sa_column_kwargs={"server_default": text("NOW()")},
+        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
     )
     updated_at: datetime = Field(
         default_factory=utc_now,
-        sa_column_kwargs={"server_default": text("NOW()")},
+        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
     )
 
     # Relationships
@@ -153,11 +153,11 @@ class Review(ReviewBase, table=True):
     reviewed_object_id: UUID = Field(foreign_key="reviewed_objects.id")
     created_at: datetime = Field(
         default_factory=utc_now,
-        sa_column_kwargs={"server_default": text("NOW()")},
+        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
     )
     updated_at: datetime = Field(
         default_factory=utc_now,
-        sa_column_kwargs={"server_default": text("NOW()")},
+        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
     )
 
     # Relationships
