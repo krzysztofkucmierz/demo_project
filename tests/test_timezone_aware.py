@@ -33,9 +33,7 @@ def session_fixture() -> Generator:
     )
 
     # Replace JSONB with JSON for SQLite compatibility
-    def mock_visit_JSONB(
-        self: Any, type_: Any, **kwargs: dict[str, Any]
-    ) -> str:
+    def mock_visit_JSONB(self: Any, type_: Any, **kwargs: dict[str, Any]) -> str:
         # Cast to str since visit_JSON should return a string representation
         return str(self.visit_JSON(type_, **kwargs))
 
@@ -65,23 +63,25 @@ class TestTimezoneAwareness:
         """Test that our models define timezone-aware datetime columns."""
         from app.models import Reviewer, ReviewedObject, Review
         from sqlalchemy import DateTime
-        
+
         # Check that our models have timezone-aware datetime columns defined
         # Note: In SQLite, timezone info is not preserved, but the column definition should be correct
         reviewer_table = Reviewer.__table__
-        assert 'created_at' in reviewer_table.columns
-        assert 'updated_at' in reviewer_table.columns
-        
+        assert "created_at" in reviewer_table.columns
+        assert "updated_at" in reviewer_table.columns
+
         # Verify column types are DateTime (timezone-aware in PostgreSQL)
-        created_at_col = reviewer_table.columns['created_at']
-        updated_at_col = reviewer_table.columns['updated_at']
-        
+        created_at_col = reviewer_table.columns["created_at"]
+        updated_at_col = reviewer_table.columns["updated_at"]
+
         assert isinstance(created_at_col.type, DateTime)
         assert isinstance(updated_at_col.type, DateTime)
-        
+
         # In PostgreSQL, these would be timezone-aware, but SQLite doesn't preserve this
 
-    def test_default_factory_generates_timezone_aware_datetimes(self, session: Session) -> None:
+    def test_default_factory_generates_timezone_aware_datetimes(
+        self, session: Session
+    ) -> None:
         """Test that the default factory creates timezone-aware datetimes."""
         repo = ReviewerRepository(session)
         reviewer_data = ReviewerCreate(
@@ -96,40 +96,45 @@ class TestTimezoneAwareness:
         # Even though SQLite strips timezone info, we can verify creation works
         assert reviewer.created_at is not None
         assert reviewer.updated_at is not None
-        
+
         # Verify timestamps are recent
         now = utc_now()
         # Convert to naive for comparison since SQLite stores naive datetimes
         naive_now = now.replace(tzinfo=None)
         time_diff = naive_now - reviewer.created_at
-        assert time_diff.total_seconds() < 10  # Should be created within last 10 seconds
+        assert (
+            time_diff.total_seconds() < 10
+        )  # Should be created within last 10 seconds
 
     def test_temporal_ordering_works_correctly(self, session: Session) -> None:
         """Test that datetime comparisons work correctly."""
         repo = ReviewerRepository(session)
-        
+
         # Create first reviewer
         reviewer1 = repo.create(
             ReviewerCreate(username="user1", email="user1@example.com")
         )
-        
+
         # Wait a tiny bit and create second reviewer
         import time
+
         time.sleep(0.01)
-        
+
         reviewer2 = repo.create(
             ReviewerCreate(username="user2", email="user2@example.com")
         )
 
         # Verify the order is correct (both are naive in SQLite)
         assert reviewer1.created_at < reviewer2.created_at
-        
+
         # Verify we can compare with current time (convert to naive for SQLite)
         naive_now = utc_now().replace(tzinfo=None)
         assert reviewer1.created_at < naive_now
         assert reviewer2.created_at < naive_now
 
-    def test_all_models_have_timezone_aware_timestamp_fields(self, session: Session) -> None:
+    def test_all_models_have_timezone_aware_timestamp_fields(
+        self, session: Session
+    ) -> None:
         """Test that all models create records with timestamp fields."""
         # Test ReviewedObject
         object_repo = ReviewedObjectRepository(session)

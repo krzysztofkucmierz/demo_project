@@ -36,11 +36,15 @@ class Reviewer(ReviewerBase, table=True):
     )
     created_at: datetime = Field(
         default_factory=utc_now,
-        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
+        sa_column=Column(
+            DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+        ),
     )
     updated_at: datetime = Field(
         default_factory=utc_now,
-        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
+        sa_column=Column(
+            DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+        ),
     )
 
     # Relationships
@@ -91,11 +95,15 @@ class ReviewedObject(ReviewedObjectBase, table=True):
     )
     created_at: datetime = Field(
         default_factory=utc_now,
-        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
+        sa_column=Column(
+            DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+        ),
     )
     updated_at: datetime = Field(
         default_factory=utc_now,
-        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
+        sa_column=Column(
+            DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+        ),
     )
 
     # Relationships
@@ -153,11 +161,15 @@ class Review(ReviewBase, table=True):
     reviewed_object_id: UUID = Field(foreign_key="reviewed_objects.id")
     created_at: datetime = Field(
         default_factory=utc_now,
-        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
+        sa_column=Column(
+            DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+        ),
     )
     updated_at: datetime = Field(
         default_factory=utc_now,
-        sa_column=Column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")),
+        sa_column=Column(
+            DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+        ),
     )
 
     # Relationships
