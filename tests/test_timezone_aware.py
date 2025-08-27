@@ -116,7 +116,6 @@ class TestTimezoneAwareness:
         )
 
         # Wait a tiny bit and create second reviewer
-        import time
 
         time.sleep(0.01)
 
