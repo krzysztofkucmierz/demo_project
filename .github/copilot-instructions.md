@@ -33,9 +33,18 @@
 - use pytest for testing
 
 
-### Project Documentation
+## Project Documentation
 - General project information: setup and development instructions are in `README.md`
 - Requirements are documented in `docs/requirements.md`
 - Architecture decisions are documented in `docs/architecture.md`
 - API documentation is generated using FastAPI's built-in OpenAPI support
 
+## Development Environment
+
+
+- The project is set up to run in a GitHub Codespace using a custom development container configuration.
+- For details see CODESPACES.md.
+- uv package manager is used for dependency management.
+
+### Codespace Configuration
+The `.devcontainer/devcontainer.json` file configures the development environment.

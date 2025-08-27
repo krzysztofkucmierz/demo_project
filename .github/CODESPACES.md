@@ -278,19 +278,5 @@ Add environment variables to your Codespace:
    - `DOCKER_BUILDKIT`: Set to `1` for faster builds
    - `COMPOSE_DOCKER_CLI_BUILD`: Set to `1` for Docker Compose v2
 
-## Tips for Optimal Performance
 
-1. **Use 4-core machines** minimum for Docker workloads
-2. **Enable prebuilds** to pre-install Docker and dependencies
-3. **Use multi-stage Dockerfiles** for faster builds
-4. **Leverage Docker layer caching** in your images
-5. **Clean up unused containers** regularly: `docker system prune`
-6. **Monitor resource usage**: `docker stats`
 
-## Support
-
-For issues specific to Docker in Codespaces:
-- Check [Docker-in-Docker feature documentation](https://github.com/devcontainers/features/tree/main/src/docker-in-docker)
-- Review [GitHub Codespaces documentation](https://docs.github.com/en/codespaces)
-- Report issues in the repository's Issues tab
-- For general Codespaces support, contact GitHub Support
