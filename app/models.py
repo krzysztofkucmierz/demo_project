@@ -1,4 +1,8 @@
-"""Database models for the review management module."""
+"""Database models for the review management module.
+
+All timestamp fields use timezone-aware TIMESTAMP(timezone=True) columns
+to support global applications with proper timezone handling.
+"""
 
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
@@ -12,6 +16,7 @@ def utc_now() -> datetime:
     """Get current UTC datetime.
 
     Replacement for deprecated datetime.utcnow().
+    Returns timezone-aware datetime in UTC for database storage.
     """
     return datetime.now(UTC)
 

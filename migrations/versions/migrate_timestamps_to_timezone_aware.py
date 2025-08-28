@@ -1,6 +1,18 @@
 """
 Migrate timestamps to timezone-aware format
 
+This migration addresses the timezone issues identified in issue #18.
+All timestamp columns are converted from 'timestamp without time zone' 
+to 'timestamp with time zone' for proper global timezone support.
+
+Tables affected:
+- reviewers: created_at, updated_at
+- reviewed_objects: created_at, updated_at  
+- reviews: created_at, updated_at
+
+Risk Level: MEDIUM - Requires downtime and table locks
+Benefits: Proper global timezone support, accurate temporal queries
+
 Revision ID: migrate_timestamps_to_timezone_aware
 Revises: add_reviewed_object_id_indexes
 Create Date: 2025-08-28
